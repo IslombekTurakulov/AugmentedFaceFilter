@@ -38,23 +38,14 @@ class MainActivity : AppCompatActivity() {
     private var refresh: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        applyFullScreenWindow()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (checkIsSupportedDeviceOrFinish()) {
-            with(findFragmentAs<FaceArFragment>(R.id.face_fragment)) {
+            with(findFragmentAs<FaceArFragment>(R.id.faceFragment)) {
                 arSceneView.cameraStreamRenderPriority = Renderable.RENDER_PRIORITY_FIRST
                 arSceneView.scene.addOnUpdateListener { it ->
                     onUpdate(it)
-
-                    // checks the state of the AR frame is Tracking.
-                    val arFrame = arSceneView.arFrame ?: return@addOnUpdateListener
-                    if (arFrame.camera?.trackingState != TrackingState.TRACKING) {
-                        return@addOnUpdateListener
-                    }
-
-                    // initialize the global anchor with default rendering models.
                     arSceneView.session.whatIfNotNull {
                         arSceneView.session
                             ?.getAllTrackables(AugmentedFace::class.java)?.let {

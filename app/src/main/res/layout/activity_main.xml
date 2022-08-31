@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.MainActivity">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/face_fragment"
+    <fragment
+        android:id="@+id/faceFragment"
         android:name="com.iuturakulov.augmentedfacefilter.ui.fragments.FaceArFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -8,17 +8,23 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.ar.core.ArCoreApk
 import com.google.ar.core.AugmentedFace
 import com.google.ar.core.TrackingState
+import com.google.ar.sceneform.ArSceneView
 import com.google.ar.sceneform.rendering.Renderable
+import com.google.ar.sceneform.ux.ArFragment
 import com.iuturakulov.augmentedfacefilter.R
 import com.iuturakulov.augmentedfacefilter.databinding.ActivityMainBinding
 import com.iuturakulov.augmentedfacefilter.ui.fragments.FaceArFragment
 import com.iuturakulov.augmentedfacefilter.ui.fragments.FilterFace
 import com.iuturakulov.augmentedfacefilter.ui.repository.ModelsRepository
+import com.iuturakulov.augmentedfacefilter.utils.applyFullScreenWindow
+import com.iuturakulov.augmentedfacefilter.utils.findFragmentAs
+import com.skydoves.whatif.whatIfNotNull
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     companion object {
         const val MIN_OPENGL_VERSION = 3.0
     }
@@ -27,39 +33,53 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var modelsRepository: ModelsRepository
+
     var faceNodeMap = HashMap<AugmentedFace, FilterFace>()
-    var refresh: Boolean = false
+    private var refresh: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        applyFullScreenWindow()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (checkIsSupportedDeviceOrFinish()) {
-            val sceneView = (binding.faceFragment as FaceArFragment).arSceneView
-            sceneView.cameraStreamRenderPriority = Renderable.RENDER_PRIORITY_FIRST
-            sceneView.scene.addOnUpdateListener {
-                sceneView.session
-                    ?.getAllTrackables(AugmentedFace::class.java)?.let {
-                        for (item in it) {
-                            if (!faceNodeMap.containsKey(item)) {
-                                val faceNode = FilterFace(item, this, modelsRepository)
-                                faceNode.setParent(sceneView.scene)
-                                faceNodeMap[item] = faceNode
-                            }
-                        }
-                        val inter = faceNodeMap.entries.iterator()
-                        while (inter.hasNext()) {
-                            val entry = inter.next()
-                            val face = entry.key
-                            if (face.trackingState == TrackingState.STOPPED) {
-                                val faceNode = entry.value
-                                faceNode.setParent(null)
-                                inter.remove()
-                            }
-                        }
-                    }
-            }
+            with(findFragmentAs<FaceArFragment>(R.id.face_fragment)) {
+                arSceneView.cameraStreamRenderPriority = Renderable.RENDER_PRIORITY_FIRST
+                arSceneView.scene.addOnUpdateListener { it ->
+                    onUpdate(it)
 
+                    // checks the state of the AR frame is Tracking.
+                    val arFrame = arSceneView.arFrame ?: return@addOnUpdateListener
+                    if (arFrame.camera?.trackingState != TrackingState.TRACKING) {
+                        return@addOnUpdateListener
+                    }
+
+                    // initialize the global anchor with default rendering models.
+                    arSceneView.session.whatIfNotNull {
+                        arSceneView.session
+                            ?.getAllTrackables(AugmentedFace::class.java)?.let {
+                                for (item in it) {
+                                    if (!faceNodeMap.containsKey(item)) {
+                                        val faceNode =
+                                            FilterFace(item, applicationContext, modelsRepository)
+                                        faceNode.setParent(arSceneView.scene)
+                                        faceNodeMap[item] = faceNode
+                                    }
+                                }
+                                val inter = faceNodeMap.entries.iterator()
+                                while (inter.hasNext()) {
+                                    val entry = inter.next()
+                                    val face = entry.key
+                                    if (face.trackingState == TrackingState.STOPPED) {
+                                        val faceNode = entry.value
+                                        faceNode.setParent(null)
+                                        inter.remove()
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
             binding.buttonRefresh.setOnClickListener {
                 if (refresh) {
                     refresh()
@@ -94,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         val openGlVersionString = (getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager)
             ?.deviceConfigurationInfo
             ?.glEsVersion
-        openGlVersionString?.let { s ->
+        openGlVersionString?.let {
             if (java.lang.Double.parseDouble(openGlVersionString) < MIN_OPENGL_VERSION) {
                 Toast.makeText(this, "Sceneform requires OpenGL ES 3.0 or later", Toast.LENGTH_LONG)
                     .show()

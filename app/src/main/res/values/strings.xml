@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AugmentedFaceFilter</string>
+    <string name="quiz_title">Your favourite singer?</string>
+    <string name="singer_picture">Singer picture</string>
 </resources>

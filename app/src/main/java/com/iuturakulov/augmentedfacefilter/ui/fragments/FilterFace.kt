@@ -17,6 +17,7 @@ import com.iuturakulov.augmentedfacefilter.ui.repository.ModelsRepository
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.suspendOnError
 import com.skydoves.sandwich.suspendOnSuccess
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 class FilterFace(
@@ -32,7 +33,7 @@ class FilterFace(
     private lateinit var mRunnable: Runnable
 
     init {
-        suspend {
+        runBlocking {
             modelsRepository.getArchitectureList().suspendOnSuccess {
                 data.forEach {
                     modelsList.add(it)

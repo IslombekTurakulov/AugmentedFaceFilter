@@ -8,15 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.ar.core.ArCoreApk
 import com.google.ar.core.AugmentedFace
 import com.google.ar.core.TrackingState
-import com.google.ar.sceneform.ArSceneView
 import com.google.ar.sceneform.rendering.Renderable
-import com.google.ar.sceneform.ux.ArFragment
 import com.iuturakulov.augmentedfacefilter.R
 import com.iuturakulov.augmentedfacefilter.databinding.ActivityMainBinding
 import com.iuturakulov.augmentedfacefilter.ui.fragments.FaceArFragment
 import com.iuturakulov.augmentedfacefilter.ui.fragments.FilterFace
 import com.iuturakulov.augmentedfacefilter.ui.repository.ModelsRepository
-import com.iuturakulov.augmentedfacefilter.utils.applyFullScreenWindow
 import com.iuturakulov.augmentedfacefilter.utils.findFragmentAs
 import com.skydoves.whatif.whatIfNotNull
 import dagger.hilt.android.AndroidEntryPoint

@@ -1,9 +1,9 @@
 package com.iuturakulov.augmentedfacefilter.di
 
-import com.iuturakulov.augmentedfacefilter.utils.Constants
 import com.iuturakulov.augmentedfacefilter.network.HttpRequestInterceptor
 import com.iuturakulov.augmentedfacefilter.network.ModelsClient
 import com.iuturakulov.augmentedfacefilter.network.ModelsService
+import com.iuturakulov.augmentedfacefilter.utils.Constants
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -39,7 +39,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-        fun provideModelsService(retrofit: Retrofit): ModelsService {
+    fun provideModelsService(retrofit: Retrofit): ModelsService {
         return retrofit.create(ModelsService::class.java)
     }
 

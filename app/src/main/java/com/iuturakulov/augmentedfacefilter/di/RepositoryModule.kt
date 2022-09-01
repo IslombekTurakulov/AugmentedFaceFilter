@@ -1,7 +1,7 @@
 package com.iuturakulov.augmentedfacefilter.di
 
-import com.iuturakulov.augmentedfacefilter.ui.repository.ModelsRepository
 import com.iuturakulov.augmentedfacefilter.network.ModelsClient
+import com.iuturakulov.augmentedfacefilter.ui.repository.ModelsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

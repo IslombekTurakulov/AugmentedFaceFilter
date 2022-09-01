@@ -24,12 +24,15 @@ import androidx.fragment.app.Fragment
 
 @Suppress("DEPRECATION")
 fun AppCompatActivity.applyFullScreenWindow() {
-  requestWindowFeature(Window.FEATURE_NO_TITLE)
-  window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    requestWindowFeature(Window.FEATURE_NO_TITLE)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN
+    )
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <T : Fragment> AppCompatActivity.findFragmentAs(@IdRes resource: Int): T {
-  return supportFragmentManager.findFragmentById(resource) as? T
-    ?: throw IllegalArgumentException("can not find the id resource: $resource")
+    return supportFragmentManager.findFragmentById(resource) as? T
+        ?: throw IllegalArgumentException("can not find the id resource: $resource")
 }
